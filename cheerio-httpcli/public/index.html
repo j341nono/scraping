@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Scraper</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        #result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Wikipedia Scraper</h1>
+    <input type="text" id="keyword" placeholder="キーワードを入力">
+    <button onclick="scrape()">検索</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function scrape() {
+            const keyword = document.getElementById('keyword').value;
+
+            //fetch()：APIを使用してサーバーにPOSTリクエストを送信
+            const response = await fetch('/scrape', {
+                method: 'POST',
+
+                //レスポンスをJSONとしてパースし、結果を動的にHTML要素として生成
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ keyword }),
+            });
+            const data = await response.json();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h2>${data.keyword}</h2>
+                <p>${data.summary}</p>
+                <a href="${data.filename}" download>テキストファイルをダウンロード</a>
+            `;
+        }
+    </script>
+</body>
+</html>
